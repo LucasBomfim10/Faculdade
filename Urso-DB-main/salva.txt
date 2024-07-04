@@ -1,0 +1,160 @@
+import mysql.connector
+from tkinter import *
+
+
+# Função para se conectar ao banco de dados
+def conectar_bd():
+    global conexao
+    conexao = mysql.connector.connect(
+        host="localhost",  # Endereço do servidor MySQL
+        user="root",  # Nome de usuário do MySQL
+        passwd="root",  # Senha do MySQL
+        port='3306',
+        database="ursos",  # Nome do banco de dados
+        autocommit=True
+    )
+    if conexao.is_connected():
+        print("Conexão estabelecida com sucesso.")
+
+
+# Função para fechar a conexão com o banco de dados
+def fechar_conexao():
+    conexao.close()
+    print("Conexão fechada.")
+
+
+# Função para executar uma instrução SQL que pode assumir insert, update, delete
+def executar_instrucao(sql):
+    cursor = conexao.cursor()
+    cursor.execute(sql)
+    cursor.close()
+
+
+# Função para realizar inserção de um urso
+def inserir_urso():
+    sql = ("INSERT INTO urso (nome_cientifico, nome_comum, status_conservacao, foto, id_habitat, "
+           "id_risco_extincao)VALUES ('exemplo', 'exemplo', 'ex', 'ex', 1, 1)")
+    executar_instrucao(sql)
+
+
+# Função para deletar um urso pelo nome
+def deletar_urso():
+    sql = "DELETE FROM urso WHERE nome_comum ='Urso Pardo'"
+    executar_instrucao(sql)
+
+
+# Função para realizar update em um urso pelo nome
+def update_urso():
+    sql = "UPDATE urso SET nome_comum = 'exemplo', foto = 'exemplo' WHERE nome_comum = 'Panda'"
+    executar_instrucao(sql)
+
+
+# Função para realizar um select de um urso pelo nome
+def selecionar_urso_nome():
+    sql = "SELECT * FROM urso WHERE nome_comum = 'teste'"
+    resultado = executar_consulta(sql)
+    if resultado:
+        urso = {
+            "id_urso": resultado[0],
+            "nome_cientifico": resultado[1],
+            "nome_comum": resultado[2],
+            "status_conservacao": resultado[3],
+            "foto": resultado[4],
+            "id_habitat": resultado[5],
+            "id_risco_extincao": resultado[6]
+        }
+        return urso
+    else:
+        return None
+
+
+# Função para executar uma consulta SQL e retornar os resultados
+def executar_consulta(sql):
+    cursor = conexao.cursor()
+    cursor.execute(sql)
+    resultados = cursor.fetchall()
+    cursor.close()
+    return resultados
+
+
+# Função para limpar a tela da interface
+def limpar_tela():
+    for widget in frame.winfo_children():
+        widget.destroy()
+
+
+# Função para mostrar os campos relevantes para inserção de um urso
+def mostrar_campos_inserir():
+    limpar_tela()
+    label_nome_cientifico = Label(frame, text="Nome Científico:")
+    label_nome_cientifico.grid(row=0, column=0)
+    entry_nome_cientifico = Entry(frame)
+    entry_nome_cientifico.grid(row=0, column=1)
+
+    label_nome_comum = Label(frame, text="Nome Comum:")
+    label_nome_comum.grid(row=1, column=0)
+    entry_nome_comum = Entry(frame)
+    entry_nome_comum.grid(row=1, column=1)
+
+    # Adicione os demais campos aqui conforme necessário
+
+    botao_confirmar = Button(frame, text="Confirmar", command=lambda: inserir_urso())
+    botao_confirmar.grid(row=2, columnspan=2)
+
+
+# Função para mostrar os campos relevantes para deletar um urso
+def mostrar_campos_deletar():
+    limpar_tela()
+    label_nome_urso = Label(frame, text="Nome do Urso:")
+    label_nome_urso.grid(row=0, column=0)
+    entry_nome_urso = Entry(frame)
+    entry_nome_urso.grid(row=0, column=1)
+
+    botao_confirmar = Button(frame, text="Confirmar", command=lambda: deletar_urso())
+    botao_confirmar.grid(row=1, columnspan=2)
+
+
+# Função para mostrar os campos relevantes para atualizar um urso
+def mostrar_campos_atualizar():
+    limpar_tela()
+    label_nome_antigo = Label(frame, text="Nome Antigo do Urso:")
+    label_nome_antigo.grid(row=0, column=0)
+    entry_nome_antigo = Entry(frame)
+    entry_nome_antigo.grid(row=0, column=1)
+
+    label_nome_novo = Label(frame, text="Novo Nome do Urso:")
+    label_nome_novo.grid(row=1, column=0)
+    entry_nome_novo = Entry(frame)
+    entry_nome_novo.grid(row=1, column=1)
+
+    botao_confirmar = Button(frame, text="Confirmar", command=lambda: update_urso())
+    botao_confirmar.grid(row=2, columnspan=2)
+
+
+# Função para criar a interface gráfica inicial
+def criar_interface():
+    root = Tk()
+    root.title("Gerenciamento de Ursos")
+
+    # Criação do frame principal
+    global frame
+    frame = Frame(root)
+    frame.pack()
+
+    # Criação dos botões de seleção de ação
+    botao_inserir = Button(frame, text="Inserir Urso", command=mostrar_campos_inserir)
+    botao_inserir.grid(row=0, column=0)
+
+    botao_deletar = Button(frame, text="Deletar Urso", command=mostrar_campos_deletar)
+    botao_deletar.grid(row=0, column=1)
+
+    botao_atualizar = Button(frame, text="Atualizar Urso", command=mostrar_campos_atualizar)
+    botao_atualizar.grid(row=0, column=2)
+
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    conectar_bd()
+    criar_interface()
+    fechar_conexao()
