@@ -171,5 +171,45 @@ VALUES
 (4, '2023-11-15', 'Um panda-gigante foi observado forrageando em áreas com bambu escasso, possivelmente devido à fragmentação do habitat.'),
 (5, '2023-08-20', 'Um urso-negro foi visto vasculhando lixeiras em uma área urbana, buscando comida.');
 
+-- Criar a view
+CREATE VIEW view_ursos AS
+SELECT * FROM urso WHERE status_conservacao = 'ex';
+
+-- Criar a stored procedure
+DELIMITER //
+CREATE PROCEDURE insert_urso(
+    IN nome_cientifico VARCHAR(100),
+    IN nome_comum VARCHAR(100),
+    IN status_conservacao VARCHAR(100),
+    IN foto VARCHAR(255),
+    IN id_habitat INT,
+    IN id_risco_extincao INT
+)
+BEGIN
+    INSERT INTO urso (nome_cientifico, nome_comum, status_conservacao, foto, id_habitat, id_risco_extincao)
+    VALUES (nome_cientifico, nome_comum, status_conservacao, foto, id_habitat, id_risco_extincao);
+END //
+DELIMITER ;
+
+-- Criar a tabela de logs para o trigger
+CREATE TABLE log_insert_urso (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome_cientifico VARCHAR(100),
+    nome_comum VARCHAR(100),
+    data_insercao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Criar o trigger
+DELIMITER //
+CREATE TRIGGER after_insert_urso
+AFTER INSERT ON urso
+FOR EACH ROW
+BEGIN
+    INSERT INTO log_insert_urso (nome_cientifico, nome_comum)
+    VALUES (NEW.nome_cientifico, NEW.nome_comum);
+END //
+DELIMITER ;
+
+
 
 

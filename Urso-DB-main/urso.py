@@ -23,7 +23,6 @@ def fechar_conexao():
 
 
 # Função para executar uma consulta SQL e retornar os resultados
-# Retorna
 def executar_consulta(sql):
     cursor = conexao.cursor()
     cursor.execute(sql)
@@ -41,24 +40,32 @@ def executar_instrucao(sql):
 
 # Funções para as operações do CRUD
 def selecionar_todos_ursos():
-    #resultado.delete(1.0, END)
     sql = "SELECT * FROM urso"
     resultados = executar_consulta(sql)
-    
     return resultados
 
+
 def inserir_urso():
-    sql = ("INSERT INTO urso (nome_cientifico, nome_comum, status_conservacao, foto, id_habitat, "
-           "id_risco_extincao)VALUES ('exemplo', 'exemplo', 'ex', 'ex', 1, 1)")
+    sql = "CALL insert_urso('exemplo', 'exemplo', 'ex', 'ex', 1, 1)"
     executar_instrucao(sql)
+
 
 def deletar_urso():
     sql = "DELETE FROM urso WHERE nome_comum LIKE 'exemplo%'"
     executar_instrucao(sql)
 
+
 def update_urso():
     sql = "UPDATE urso SET nome_comum = 'exemplo_novo', foto = 'exemplo' WHERE nome_comum = 'exemplo'"
     executar_instrucao(sql)
+
+
+# Função para selecionar ursos usando a view
+def selecionar_view_ursos():
+    sql = "SELECT * FROM view_ursos"
+    resultados = executar_consulta(sql)
+    return resultados
+
 
 # Criar a interface gráfica
 def criar_menu_inicial():
@@ -87,6 +94,13 @@ def criar_menu_inicial():
         update_urso()
         resultado.insert(END, "Urso atualizado com sucesso.\n")
 
+    def selecionar_view():
+        resultado.delete(1.0, END)
+        resultado.insert(END, "Selecionando ursos da view...\n")
+        lista_ursos = selecionar_view_ursos()
+        for urso in lista_ursos:
+            resultado.insert(END, f"{urso}\n")
+
     root = Tk()
     root.title("Menu Inicial")
 
@@ -105,10 +119,14 @@ def criar_menu_inicial():
     botao_deletar = Button(frame, text="Deletar", command=deletar)
     botao_deletar.pack(pady=5)
 
+    botao_view = Button(frame, text="Selecionar View", command=selecionar_view)
+    botao_view.pack(pady=5)
+
     resultado = Text(root)
     resultado.pack()
 
     root.mainloop()
+
 
 conectar_bd()
 criar_menu_inicial()
