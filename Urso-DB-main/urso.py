@@ -165,38 +165,39 @@ def criar_menu_inicial():
 
 
    root = Tk()
-   root.title("Menu Inicial")
+   root.title("Mapeamento de Ursos")
+   root.configure(bg="#874b0f")
 
 
-   frame = Frame(root)
+   frame = Frame(root, bg="#9a5e22")
    frame.pack(padx=20, pady=20)
 
 
-   botao_select = Button(frame, text="Selecionar", command=selecionar)
+   botao_select = Button(frame, text="Selecionar", command=selecionar, bg="#fffafa")
    botao_select.pack(pady=5)
 
 
-   botao_inserir = Button(frame, text="Inserir", command=inserir)
+   botao_inserir = Button(frame, text="Inserir", command=inserir, bg="#fffafa")
    botao_inserir.pack(pady=5)
 
 
-   botao_atualizar = Button(frame, text="Atualizar", command=atualizar)
+   botao_atualizar = Button(frame, text="Atualizar", command=atualizar, gb="#fffafa")
    botao_atualizar.pack(pady=5)
 
 
-   botao_deletar = Button(frame, text="Deletar", command=deletar)
+   botao_deletar = Button(frame, text="Deletar", command=deletar, gb="#fffafa")
    botao_deletar.pack(pady=5)
 
 
-   botao_view = Button(frame, text="Selecionar View", command=selecionar_view)
+   botao_view = Button(frame, text="Selecionar View", command=selecionar_view, bg="#fffafa")
    botao_view.pack(pady=5)
 
 
-   botao_transacao = Button(frame, text="Executar Transação", command=executar_transacao_com_mensagem)
+   botao_transacao = Button(frame, text="Executar Transação", command=executar_transacao_com_mensagem, bg="#fffafa")
    botao_transacao.pack(pady=5)
 
 
-   resultado = Text(root, height=15, width=80)
+   resultado = Text(root, height=15, width=80. bg="e0e0e0", fg ="#000000")
    resultado.pack()
 
 
